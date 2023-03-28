@@ -97,8 +97,6 @@ const Year = ({ year }: { year: Date }) => {
 };
 
 const BufferedCalendar = () => {
-  console.log('render');
-
   const [yearIndex, setYearIndex] = useState(0);
   const [currentYear, setCurrentYear] = useState(new Date());
   const yearComponents = useMemo(() => {
@@ -114,9 +112,6 @@ const BufferedCalendar = () => {
       <Year year={addYears(currentYear, 4)} />,
     ];
   }, [currentYear]);
-  console.log(yearIndex);
-
-  console.log(yearComponents);
 
   useEffect(() => {
     if (yearIndex === -5) {
