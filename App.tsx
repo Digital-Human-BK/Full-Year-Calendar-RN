@@ -8,9 +8,11 @@ import {
 } from 'react-native';
 
 import CalendarFromNPM from './src/screens/CalendarFromNPM';
-import CalendarDateFNS from './src/screens/CalendarDateFNS';
-import BufferedCalendar from './src/screens/BufferCalendar';
+// import CalendarDateFNS from './src/screens/CalendarDateFNS';
+import BufferedCalendarFL from './src/screens/BufferCalendarFL';
 import CalendarForLoopDateFNS from './src/screens/CalendarForLoopDateFNS';
+import BufferedCalendarBidirectional from './src/screens/BufferCalendarBidirectional';
+import TestBidirectional from './src/screens/TestBidirectional';
 
 const color = '#00AFF0';
 
@@ -32,10 +34,10 @@ const App = () => {
         <TouchableOpacity
           style={styles.navButton}
           onPress={() => {
-            setView(<CalendarDateFNS />);
-            setViewTitle('Generated using Date-FNS and .map()');
+            setView(<TestBidirectional />);
+            setViewTitle('Test');
           }}>
-          <Text style={styles.navButtonText}>FNS Map</Text>
+          <Text style={styles.navButtonText}>Test</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
@@ -43,15 +45,23 @@ const App = () => {
             setView(<CalendarForLoopDateFNS />);
             setViewTitle('Generated using Date-FNS and for loop');
           }}>
-          <Text style={styles.navButtonText}>FNS For Loop</Text>
+          <Text style={styles.navButtonText}>For Loop</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
           onPress={() => {
-            setView(<BufferedCalendar />);
-            setViewTitle('Buffered calendar');
+            setView(<BufferedCalendarBidirectional />);
+            setViewTitle('Bi-directional custom component');
           }}>
-          <Text style={styles.navButtonText}>FNS Buffered</Text>
+          <Text style={styles.navButtonText}>Bi-direct</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => {
+            setView(<BufferedCalendarFL />);
+            setViewTitle('Buffered calendar with horizontal flat list');
+          }}>
+          <Text style={styles.navButtonText}>Buffered FL</Text>
         </TouchableOpacity>
       </View>
       <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: 'bold' }}>
@@ -66,7 +76,7 @@ const App = () => {
       <ScrollView
         // Actual calendar content in this component
         contentContainerStyle={{
-          padding: 10,
+          // padding: 10,
           backgroundColor: '#ffffff',
         }}>
         {view}
