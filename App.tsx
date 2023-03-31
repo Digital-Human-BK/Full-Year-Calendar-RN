@@ -11,8 +11,9 @@ import CalendarFromNPM from './src/screens/CalendarFromNPM';
 // import CalendarDateFNS from './src/screens/CalendarDateFNS';
 import BufferedCalendarFL from './src/screens/BufferCalendarFL';
 import CalendarForLoopDateFNS from './src/screens/CalendarForLoopDateFNS';
-import BufferedCalendarBidirectional from './src/screens/BufferCalendarBidirectional';
+// import BufferedCalendarBidirectional from './src/screens/BufferCalendarBidirectional';
 import TestBidirectional from './src/screens/TestBidirectional';
+import TestBidirectionalOriginal from './src/screens/TestBidirectionalOriginal';
 
 const color = '#00AFF0';
 
@@ -50,8 +51,8 @@ const App = () => {
         <TouchableOpacity
           style={styles.navButton}
           onPress={() => {
-            setView(<BufferedCalendarBidirectional />);
-            setViewTitle('Bi-directional custom component');
+            setView(<TestBidirectionalOriginal />);
+            setViewTitle('FL Bi-directional');
           }}>
           <Text style={styles.navButtonText}>Bi-direct</Text>
         </TouchableOpacity>

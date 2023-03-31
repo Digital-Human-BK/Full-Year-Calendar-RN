@@ -1,19 +1,140 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { View, Text, FlatList, StyleSheet, Dimensions } from 'react-native';
+import {
+  eachMonthOfInterval,
+  startOfYear,
+  endOfYear,
+  eachWeekOfInterval,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  startOfWeek,
+  endOfWeek,
+  addYears,
+  subYears,
+} from 'date-fns';
+
+// import Header from '../components/Header';
+import Agenda from '../components/Agenda';
+
+const color = '#00AFF0';
 
 const { width } = Dimensions.get('window');
 
+const Month = ({ month }: { month: Date }) => {
+  const weeks = eachWeekOfInterval({
+    start: startOfMonth(month),
+    end: endOfMonth(month),
+  });
+
+  const renderedWeeks = [];
+  for (let i = 0; i < weeks.length; i++) {
+    const week = weeks[i];
+    const days = eachDayOfInterval({
+      start: startOfWeek(week),
+      end: endOfWeek(week),
+    });
+
+    const renderedDays = [];
+    for (let j = 0; j < days.length; j++) {
+      const day = days[j];
+      const dayOfMonth = day.getDate();
+
+      // Only render the day if it belongs to the current month
+      if (day.getMonth() === month.getMonth()) {
+        renderedDays.push(
+          <Text key={day.getTime()} style={styles.dayText}>
+            {dayOfMonth}
+          </Text>,
+        );
+      } else {
+        renderedDays.push(<View key={day.getTime()} style={styles.emptyDay} />);
+      }
+    }
+
+    renderedWeeks.push(
+      <View key={week.getTime()} style={styles.weekView}>
+        {renderedDays}
+      </View>,
+    );
+  }
+
+  return (
+    <View style={styles.monthView}>
+      <Text style={styles.monthTitle}>
+        {month.toLocaleString('default', { month: 'long' })}
+      </Text>
+      {renderedWeeks}
+    </View>
+  );
+};
+
+const Year = ({ year }: { year: Date }) => {
+  const months = useMemo(
+    () =>
+      eachMonthOfInterval({
+        start: startOfYear(year),
+        end: endOfYear(year),
+      }),
+    [year],
+  );
+
+  return (
+    <View style={styles.yearView}>
+      {months.map(month => (
+        <Month key={month.getTime()} month={month} />
+      ))}
+    </View>
+  );
+};
+
+type YearItem = {
+  id: string;
+  element: Element;
+};
+
 const HorizontalList = () => {
-  const [data, setData] = useState([
-    { id: 1, text: 'Item 1' },
-    { id: 2, text: 'Item 2' },
-    { id: 3, text: 'Item 3' },
-    { id: 4, text: 'Item 4' },
-    { id: 5, text: 'Item 5' },
-    { id: 6, text: 'Item 6' },
-    { id: 7, text: 'Item 7' },
+  const currentYear = new Date();
+  console.log('New render');
+
+  const [yearsList, setYearsList] = useState<YearItem[]>([
+    {
+      id: subYears(currentYear, 4).toString(),
+      element: <Year year={subYears(currentYear, 4)} />,
+    },
+    {
+      id: subYears(currentYear, 3).toString(),
+      element: <Year year={subYears(currentYear, 3)} />,
+    },
+    {
+      id: subYears(currentYear, 2).toString(),
+      element: <Year year={subYears(currentYear, 2)} />,
+    },
+    {
+      id: subYears(currentYear, 1).toString(),
+      element: <Year year={subYears(currentYear, 1)} />,
+    },
+    {
+      id: currentYear.toString(),
+      element: <Year year={currentYear} />,
+    },
+    {
+      id: addYears(currentYear, 1).toString(),
+      element: <Year year={addYears(currentYear, 1)} />,
+    },
+    {
+      id: addYears(currentYear, 2).toString(),
+      element: <Year year={addYears(currentYear, 2)} />,
+    },
+    {
+      id: addYears(currentYear, 3).toString(),
+      element: <Year year={addYears(currentYear, 3)} />,
+    },
+    {
+      id: addYears(currentYear, 4).toString(),
+      element: <Year year={addYears(currentYear, 4)} />,
+    },
   ]);
-  console.log(data);
 
   const ref = useRef<FlatList>(null);
 
@@ -36,12 +157,21 @@ const HorizontalList = () => {
       // add more items to the end
       console.log('adding to end');
       setTimeout(() => {
-        const lastItemId = data[data.length - 1].id;
-        setData(currentData => [
+        const lastYearValue = new Date(yearsList[yearsList.length - 1].id);
+        setYearsList(currentData => [
           ...currentData,
-          { id: lastItemId + 1, text: `Item ${lastItemId + 1}` },
-          { id: lastItemId + 2, text: `Item ${lastItemId + 2}` },
-          { id: lastItemId + 3, text: `Item ${lastItemId + 3}` },
+          {
+            id: addYears(lastYearValue, 1).toString(),
+            element: <Year year={addYears(lastYearValue, 1)} />,
+          },
+          {
+            id: addYears(lastYearValue, 2).toString(),
+            element: <Year year={addYears(lastYearValue, 2)} />,
+          },
+          {
+            id: addYears(lastYearValue, 3).toString(),
+            element: <Year year={addYears(lastYearValue, 3)} />,
+          },
         ]);
       }, 500);
     } else if (contentOffset.x <= 0) {
@@ -49,11 +179,20 @@ const HorizontalList = () => {
 
       // add more items to the beginning
       setTimeout(() => {
-        const firstItemId = data[0].id;
-        setData(currentData => [
-          { id: firstItemId - 3, text: `Item ${firstItemId - 3}` },
-          { id: firstItemId - 2, text: `Item ${firstItemId - 2}` },
-          { id: firstItemId - 1, text: `Item ${firstItemId - 1}` },
+        const firstYearValue = new Date(yearsList[0].id);
+        setYearsList(currentData => [
+          {
+            id: subYears(firstYearValue, 3).toString(),
+            element: <Year year={subYears(firstYearValue, 3)} />,
+          },
+          {
+            id: subYears(firstYearValue, 2).toString(),
+            element: <Year year={subYears(firstYearValue, 2)} />,
+          },
+          {
+            id: subYears(firstYearValue, 1).toString(),
+            element: <Year year={subYears(firstYearValue, 1)} />,
+          },
           ...currentData,
         ]);
         scrollToIndex(3);
@@ -63,10 +202,26 @@ const HorizontalList = () => {
 
   return (
     <View style={styles.container}>
+      {/* <Header year={2023} /> */}
       <FlatList
         ref={ref}
-        data={data}
-        renderItem={({ item }) => <Text style={styles.item}>{item.text}</Text>}
+        data={yearsList}
+        renderItem={({ item }) => (
+          <View style={{ width: width, padding: 10 }}>
+            <>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                }}>
+                {item.id}
+              </Text>
+              {item.element}
+              <Agenda />
+            </>
+          </View>
+        )}
         keyExtractor={item => item.id.toString()}
         horizontal
         pagingEnabled
@@ -88,15 +243,39 @@ export default HorizontalList;
 
 const styles = StyleSheet.create({
   container: {
-    height: 100,
-    backgroundColor: '#f5f5f5',
+    flex: 1,
+    backgroundColor: '#ffffff',
     marginVertical: 10,
   },
-  item: {
-    width: width - 20,
-    marginHorizontal: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: '#f9c2ff',
+  yearView: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    columnGap: 20,
+  },
+  monthView: {
+    width: width / 3 - 20,
+    marginBottom: 15,
+    height: 160,
+  },
+  monthTitle: {
+    fontSize: 14,
+    marginBottom: 10,
+    color: color,
+  },
+  weekView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  dayText: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 10,
+    marginBottom: 10,
+    fontWeight: 'bold',
+    color: color,
+  },
+  emptyDay: {
+    flex: 1,
   },
 });
