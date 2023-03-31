@@ -93,7 +93,7 @@ type YearItem = {
   element: Element;
 };
 
-const HorizontalList = () => {
+const Calendar = () => {
   const currentYear = new Date();
   console.log('New render');
 
@@ -239,7 +239,7 @@ const HorizontalList = () => {
   );
 };
 
-export default HorizontalList;
+export default Calendar;
 
 const styles = StyleSheet.create({
   container: {
